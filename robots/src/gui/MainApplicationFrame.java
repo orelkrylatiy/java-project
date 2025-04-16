@@ -14,12 +14,14 @@ public class MainApplicationFrame extends JFrame
 {
     private final LogWindow logWindow;
     private final GameWindow gameWindow;
+    private final MainController controller;
 
     private final JDesktopPane desktopPane = new JDesktopPane();
     
-    public MainApplicationFrame(LogWindow logWindow, GameWindow gameWindow) {
+    public MainApplicationFrame(LogWindow logWindow, GameWindow gameWindow, MainController mainController) {
         this.logWindow = logWindow;
         this.gameWindow = gameWindow;
+        this.controller = mainController;
         initialize();
     }
 
@@ -64,59 +66,63 @@ public class MainApplicationFrame extends JFrame
         desktopPane.add(frame);
         frame.setVisible(true);
     }
-    
-    private JMenuBar generateMenuBar()
-    {
-        JMenuBar menuBar = new JMenuBar();
 
+    private JMenuBar generateMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.add(createFileMenu());
+        menuBar.add(createLookAndFeelMenu());
+        menuBar.add(createTestMenu());
+        return menuBar;
+    }
+
+    private JMenu createFileMenu() {
+        JMenu fileMenu = new JMenu("Файл");
+        JMenuItem exitItem = new JMenuItem("Выход");
+
+        exitItem.addActionListener(e -> handleExit());
+        fileMenu.add(exitItem);
+
+        return fileMenu;
+    }
+
+    private JMenu createLookAndFeelMenu() {
         JMenu lookAndFeelMenu = new JMenu("Режим отображения");
         lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
         lookAndFeelMenu.getAccessibleContext().setAccessibleDescription("Управление режимом отображения приложения");
 
-        {
-            JMenuItem systemLookAndFeel = new JMenuItem("Системная схема", KeyEvent.VK_S);
-            systemLookAndFeel.addActionListener((_) -> {
-                setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                invalidate();
-            });
-            lookAndFeelMenu.add(systemLookAndFeel);
-        }
+        JMenuItem systemItem = new JMenuItem("Системная схема", KeyEvent.VK_S);
+        systemItem.addActionListener(e -> {
+            setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            invalidate();
+        });
 
-        {
-            JMenuItem crossplatformLookAndFeel = new JMenuItem("Универсальная схема", KeyEvent.VK_S);
-            crossplatformLookAndFeel.addActionListener((_) -> {
-                setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-                this.invalidate();
-            });
-            lookAndFeelMenu.add(crossplatformLookAndFeel);
-        }
+        JMenuItem crossItem = new JMenuItem("Универсальная схема", KeyEvent.VK_S);
+        crossItem.addActionListener(e -> {
+            setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            invalidate();
+        });
 
+        lookAndFeelMenu.add(systemItem);
+        lookAndFeelMenu.add(crossItem);
+
+        return lookAndFeelMenu;
+    }
+
+
+    private JMenu createTestMenu() {
         JMenu testMenu = new JMenu("Тесты");
         testMenu.setMnemonic(KeyEvent.VK_T);
         testMenu.getAccessibleContext().setAccessibleDescription("Тестовые команды");
 
         {
             JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
-            addLogMessageItem.addActionListener((_) -> Logger.debug("Новая строка"));
+            addLogMessageItem.addActionListener(e -> controller.onAddLogMessage());
             testMenu.add(addLogMessageItem);
         }
 
-        JMenu fileMenu = new JMenu("Файл");
-        JMenuItem exitItem = new JMenuItem("Выход");
-
-        exitItem.addActionListener(e -> handleExit());
-
-
-
-        fileMenu.add(exitItem);
-        menuBar.add(fileMenu);
-
-
-
-        menuBar.add(lookAndFeelMenu);
-        menuBar.add(testMenu);
-        return menuBar;
+        return testMenu;
     }
+
 
     private void handleExit() {
         UIManager.put("OptionPane.yesButtonText", "Да");
@@ -130,7 +136,7 @@ public class MainApplicationFrame extends JFrame
         );
 
         if (choice == JOptionPane.YES_OPTION) {
-            System.exit(0);
+            controller.handleExit();
         }
     }
 

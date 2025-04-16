@@ -14,16 +14,19 @@ public class MainController {
     }
 
     public MainApplicationFrame createFrame() {
-        MainApplicationFrame frame = new MainApplicationFrame(logWindow, gameWindow);
+        MainApplicationFrame frame = new MainApplicationFrame(logWindow, gameWindow, this);
         frame.pack();
         frame.setVisible(true);
         frame.setExtendedState(Frame.MAXIMIZED_BOTH);
         return frame;
     }
 
+    public void onAddLogMessage() {
+        Logger.debug("Новая строка");
+    }
 
-    private void handleExit() {
-        // логика выхода
+    public void handleExit() {
+        System.exit(0);
     }
 
 }
