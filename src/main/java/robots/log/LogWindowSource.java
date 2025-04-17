@@ -60,6 +60,7 @@ public class LogWindowSource
                 }
             }
         }
+
         for (LogChangeListener listener : activeListeners)
         {
             listener.onLogChanged();
