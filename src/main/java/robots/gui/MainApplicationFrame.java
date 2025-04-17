@@ -1,14 +1,22 @@
-package gui;
+package robots.gui;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import java.io.File;
+
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import java.util.Properties;
+
 import javax.swing.*;
 
-import log.Logger;
+import robots.log.Logger;
+
 
 public class MainApplicationFrame extends JFrame
 {
@@ -41,6 +49,8 @@ public class MainApplicationFrame extends JFrame
 
         setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
+        restoreWindowStates();
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -79,7 +89,7 @@ public class MainApplicationFrame extends JFrame
         JMenu fileMenu = new JMenu("Файл");
         JMenuItem exitItem = new JMenuItem("Выход");
 
-        exitItem.addActionListener(e -> handleExit());
+        exitItem.addActionListener(_ -> handleExit());
         fileMenu.add(exitItem);
 
         return fileMenu;
@@ -91,13 +101,13 @@ public class MainApplicationFrame extends JFrame
         lookAndFeelMenu.getAccessibleContext().setAccessibleDescription("Управление режимом отображения приложения");
 
         JMenuItem systemItem = new JMenuItem("Системная схема", KeyEvent.VK_S);
-        systemItem.addActionListener(e -> {
+        systemItem.addActionListener(_ -> {
             setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             invalidate();
         });
 
         JMenuItem crossItem = new JMenuItem("Универсальная схема", KeyEvent.VK_S);
-        crossItem.addActionListener(e -> {
+        crossItem.addActionListener(_ -> {
             setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
             invalidate();
         });
@@ -116,7 +126,7 @@ public class MainApplicationFrame extends JFrame
 
         {
             JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
-            addLogMessageItem.addActionListener(e -> controller.onAddLogMessage());
+            addLogMessageItem.addActionListener(_ -> controller.onAddLogMessage());
             testMenu.add(addLogMessageItem);
         }
 
@@ -141,8 +151,7 @@ public class MainApplicationFrame extends JFrame
     }
 
 
-    private void setLookAndFeel(String className)
-    {
+    private void setLookAndFeel(String className) {
         try
         {
             UIManager.setLookAndFeel(className);
@@ -154,4 +163,62 @@ public class MainApplicationFrame extends JFrame
             // just ignore
         }
     }
+
+
+    public void saveWindowStates() {
+        Properties props = new Properties();
+
+        for (JInternalFrame frame : desktopPane.getAllFrames()) {
+            String name = frame.getTitle();
+            Rectangle bounds = frame.getBounds();
+
+            props.setProperty(name + ".x", String.valueOf(bounds.x));
+            props.setProperty(name + ".y", String.valueOf(bounds.y));
+            props.setProperty(name + ".width", String.valueOf(bounds.width));
+            props.setProperty(name + ".height", String.valueOf(bounds.height));
+            props.setProperty(name + ".isIcon", String.valueOf(frame.isIcon()));
+            props.setProperty(name + ".isMaximized", String.valueOf(frame.isMaximum()));
+        }
+
+        try (FileOutputStream out = new FileOutputStream(WindowConfig.getConfigFile())) {
+            props.store(out, "Window state");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void restoreWindowStates() {
+        File file = WindowConfig.getConfigFile();
+        if (!file.exists()) return;
+
+        Properties props = new Properties();
+        try (FileInputStream in = new FileInputStream(file)) {
+            props.load(in);
+        } catch (IOException e) {
+            Logger.error("Ошибка при установке LookAndFeel: " + e.getMessage());
+        }
+
+        for (JInternalFrame frame : desktopPane.getAllFrames()) {
+            String name = frame.getTitle();
+            try {
+                int x = Integer.parseInt(props.getProperty(name + ".x", "100"));
+                int y = Integer.parseInt(props.getProperty(name + ".y", "100"));
+                int width = Integer.parseInt(props.getProperty(name + ".width", "300"));
+                int height = Integer.parseInt(props.getProperty(name + ".height", "300"));
+
+                frame.setBounds(x, y, width, height);
+
+                if (Boolean.parseBoolean(props.getProperty(name + ".isIcon", "false")))
+                    frame.setIcon(true);
+                if (Boolean.parseBoolean(props.getProperty(name + ".isMaximized", "false")))
+                    frame.setMaximum(true);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 }
