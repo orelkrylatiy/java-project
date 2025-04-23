@@ -34,6 +34,10 @@ public class MainApplicationFrame extends JFrame
     }
 
     private void initialize() {
+        gameWindow.setName("gameWindow");
+        logWindow.setName("logWindow");
+
+
         setLogWindow(logWindow);
         int inset = 50;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -169,21 +173,25 @@ public class MainApplicationFrame extends JFrame
         Properties props = new Properties();
 
         for (JInternalFrame frame : desktopPane.getAllFrames()) {
-            String name = frame.getTitle();
+            String name = frame.getName();
             Rectangle bounds = frame.getBounds();
 
             props.setProperty(name + ".x", String.valueOf(bounds.x));
             props.setProperty(name + ".y", String.valueOf(bounds.y));
             props.setProperty(name + ".width", String.valueOf(bounds.width));
             props.setProperty(name + ".height", String.valueOf(bounds.height));
-            props.setProperty(name + ".isIcon", String.valueOf(frame.isIcon()));
+            try {
+                props.setProperty(name + ".isIcon", String.valueOf(frame.isIcon()));
+            } catch (Exception e) {
+                Logger.error("Ошибка при получении isIcon: " + e.getMessage());
+            }
             props.setProperty(name + ".isMaximized", String.valueOf(frame.isMaximum()));
         }
 
         try (FileOutputStream out = new FileOutputStream(WindowConfig.getConfigFile())) {
             props.store(out, "Window state");
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.error("Ошибка при восстановлении положения окна " + e.getMessage());
         }
     }
 
@@ -200,12 +208,12 @@ public class MainApplicationFrame extends JFrame
         }
 
         for (JInternalFrame frame : desktopPane.getAllFrames()) {
-            String name = frame.getTitle();
+            String name = frame.getName();
             try {
-                int x = Integer.parseInt(props.getProperty(name + ".x", "100"));
-                int y = Integer.parseInt(props.getProperty(name + ".y", "100"));
-                int width = Integer.parseInt(props.getProperty(name + ".width", "300"));
-                int height = Integer.parseInt(props.getProperty(name + ".height", "300"));
+                int x = parseIntSafe(props, name + ".x", 100);
+                int y = parseIntSafe(props, name + ".y", 100);
+                int width = parseIntSafe(props, name + ".width", 300);
+                int height = parseIntSafe(props, name + ".height", 300);
 
                 frame.setBounds(x, y, width, height);
 
@@ -215,10 +223,18 @@ public class MainApplicationFrame extends JFrame
                     frame.setMaximum(true);
 
             } catch (Exception e) {
-                e.printStackTrace();
+                Logger.error("Ошибка при восстановлении положения окна " + name + ": " + e.getMessage());
             }
         }
     }
 
+
+    private int parseIntSafe(Properties props, String key, int defaultValue) {
+        try {
+            return Integer.parseInt(props.getProperty(key));
+        } catch (NumberFormatException | NullPointerException e) {
+            return defaultValue;
+        }
+    }
 
 }
