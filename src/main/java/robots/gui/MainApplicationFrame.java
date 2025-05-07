@@ -23,13 +23,16 @@ public class MainApplicationFrame extends JFrame
     private final LogWindow logWindow;
     private final GameWindow gameWindow;
     private final MainController controller;
+    private final RobotPositionWindow robotPositionWindow;
+
 
     private final JDesktopPane desktopPane = new JDesktopPane();
-    
-    public MainApplicationFrame(LogWindow logWindow, GameWindow gameWindow, MainController mainController) {
+
+    public MainApplicationFrame(LogWindow logWindow, GameWindow gameWindow, MainController mainController, RobotPositionWindow robotPositionWindow) {
         this.logWindow = logWindow;
         this.gameWindow = gameWindow;
         this.controller = mainController;
+        this.robotPositionWindow = robotPositionWindow;
         initialize();
     }
 
@@ -50,6 +53,7 @@ public class MainApplicationFrame extends JFrame
 
         addWindow(logWindow);
         addWindow(gameWindow);
+        addWindow(robotPositionWindow);
 
         setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -74,7 +78,6 @@ public class MainApplicationFrame extends JFrame
         Logger.debug("Протокол работает");
     }
 
-    // окна внутри этого стола
     protected void addWindow(JInternalFrame frame)
     {
         desktopPane.add(frame);
