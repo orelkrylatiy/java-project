@@ -10,8 +10,10 @@ public class MainController {
     private final GameWindow gameWindow;
     private MainApplicationFrame frame;
     private final RobotPositionWindow robotPositionWindow;
+    private final SnakePanel snakePanel;
 
     public MainController() {
+        this.snakePanel = new SnakePanel();
         this.logWindow = new LogWindow(Logger.getDefaultLogSource());
         this.gameWindow = new GameWindow();
         this.robotPositionWindow = new RobotPositionWindow(Logger.getrobotPositionModel());

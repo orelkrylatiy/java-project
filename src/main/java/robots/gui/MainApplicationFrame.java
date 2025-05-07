@@ -33,6 +33,7 @@ public class MainApplicationFrame extends JFrame
         this.gameWindow = gameWindow;
         this.controller = mainController;
         this.robotPositionWindow = robotPositionWindow;
+
         initialize();
     }
 
@@ -54,6 +55,10 @@ public class MainApplicationFrame extends JFrame
         addWindow(logWindow);
         addWindow(gameWindow);
         addWindow(robotPositionWindow);
+
+        addWindow(new NewSnakeWindow());
+
+        add(new SnakePanel());
 
         setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
