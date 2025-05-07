@@ -1,4 +1,5 @@
-package log;
+package robots.log;
+
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,6 +60,7 @@ public class LogWindowSource
                 }
             }
         }
+
         for (LogChangeListener listener : activeListeners)
         {
             listener.onLogChanged();
