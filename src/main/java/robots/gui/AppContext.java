@@ -12,5 +12,4 @@ public class AppContext {
         this.controller = controller;
         this.positionWindow = positionWindow;
     }
-
 }
