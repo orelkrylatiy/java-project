@@ -158,4 +158,5 @@ public class SnakePanel extends JPanel {
         g.setColor(Color.BLACK);
         g.drawOval(targetX - 4, targetY - 4, 8, 8);
     }
+
 }
