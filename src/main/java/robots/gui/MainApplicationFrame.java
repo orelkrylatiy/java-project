@@ -53,7 +53,7 @@ public class MainApplicationFrame extends JFrame
         gameWindow.setSize(400,  400);
 
         addWindow(logWindow);
-        addWindow(gameWindow);
+        // addWindow(gameWindow);
         addWindow(robotPositionWindow);
 
         addWindow(new NewSnakeWindow());
