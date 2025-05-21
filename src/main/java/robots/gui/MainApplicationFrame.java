@@ -22,18 +22,14 @@ public class MainApplicationFrame extends JFrame
 {
     private final LogWindow logWindow;
     private final GameWindow gameWindow;
-    private final MainController controller;
     private final RobotPositionWindow robotPositionWindow;
-
 
     private final JDesktopPane desktopPane = new JDesktopPane();
 
-    public MainApplicationFrame(LogWindow logWindow, GameWindow gameWindow, MainController mainController, RobotPositionWindow robotPositionWindow) {
-        this.logWindow = logWindow;
-        this.gameWindow = gameWindow;
-        this.controller = mainController;
-        this.robotPositionWindow = robotPositionWindow;
-
+    public MainApplicationFrame(AppContext appContext) {
+        this.logWindow = appContext.logWindow;
+        this.gameWindow = appContext.gameWindow;
+        this.robotPositionWindow = appContext.positionWindow;
         initialize();
     }
 
@@ -53,12 +49,8 @@ public class MainApplicationFrame extends JFrame
         gameWindow.setSize(400,  400);
 
         addWindow(logWindow);
-        // addWindow(gameWindow);
+        addWindow(gameWindow);
         addWindow(robotPositionWindow);
-
-        addWindow(new NewSnakeWindow());
-
-        add(new SnakePanel());
 
         setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -138,10 +130,9 @@ public class MainApplicationFrame extends JFrame
 
         {
             JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
-            addLogMessageItem.addActionListener(_ -> controller.onAddLogMessage());
+            addLogMessageItem.addActionListener(_ -> Logger.debug("Новая строка"));
             testMenu.add(addLogMessageItem);
         }
-
         return testMenu;
     }
 
@@ -158,7 +149,7 @@ public class MainApplicationFrame extends JFrame
         );
 
         if (choice == JOptionPane.YES_OPTION) {
-            controller.handleExit();
+            System.exit(0);
         }
     }
 
