@@ -1,5 +1,7 @@
 package robots.gui;
 import robots.log.Logger;
+import robots.log.RobotModel;
+
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics;
@@ -106,7 +108,7 @@ public class GameVisualizer extends JPanel
         
         moveRobot(velocity, angularVelocity, 10);
 
-        Logger.getrobotPositionModel().setPosition(m_robotPositionX, m_robotPositionY);
+        RobotModel.getRobotPositionModel().setPosition(m_robotPositionX, m_robotPositionY);
     }
     
     private static double applyLimits(double value, double min, double max)
