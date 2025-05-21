@@ -26,6 +26,7 @@ public class MainApplicationFrame extends JFrame
 
     private final JDesktopPane desktopPane = new JDesktopPane();
 
+
     public MainApplicationFrame(AppContext appContext) {
         this.logWindow = appContext.logWindow;
         this.gameWindow = appContext.gameWindow;
@@ -49,8 +50,12 @@ public class MainApplicationFrame extends JFrame
         gameWindow.setSize(400,  400);
 
         addWindow(logWindow);
-        addWindow(gameWindow);
+        // addWindow(gameWindow);
         addWindow(robotPositionWindow);
+
+        addWindow(new NewSnakeWindow());
+
+        add(new SnakePanel());
 
         setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
