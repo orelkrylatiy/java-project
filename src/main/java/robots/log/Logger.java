@@ -2,7 +2,6 @@ package robots.log;
 
 public final class Logger {
     private static final LogWindowSource defaultLogSource = new LogWindowSource(100);
-    private static final RobotPositionSource robotPositionModel = new RobotPositionSource();
 
     private Logger() {
     }
@@ -17,9 +16,5 @@ public final class Logger {
 
     public static LogWindowSource getDefaultLogSource() {
         return defaultLogSource;
-    }
-
-    public static RobotPositionSource getrobotPositionModel() {
-        return robotPositionModel;
     }
 }
