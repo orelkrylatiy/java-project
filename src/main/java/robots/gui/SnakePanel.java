@@ -1,6 +1,7 @@
 package robots.gui;
 
 import robots.log.Logger;
+import robots.log.RobotModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -77,7 +78,7 @@ public class SnakePanel extends JPanel {
             snakeY += dy;
         }
 
-        Logger.getrobotPositionModel().setPosition(snakeX, snakeY);
+        RobotModel.getRobotPositionModel().setPosition(snakeX, snakeY);
 
         // === ВТОРАЯ ЗМЕЯ: ПРЕСЛЕДОВАТЕЛЬ ===
         double angleToLeader = Math.atan2(snakeY - followerY, snakeX - followerX);
